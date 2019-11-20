@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="633.0" prefWidth="628.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ahager.tutorial.SceneFXMLController">
+    <children>
+      <Label layoutX="14.0" layoutY="14.0" text="Blogname:" />
+      <TextField id="txtBlogName" fx:id="txtBlogName" layoutX="99.0" layoutY="9.0" prefHeight="31.0" prefWidth="361.0" />
+      <Button id="btnStart" fx:id="btnStart" layoutX="467.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleButtonStart" prefHeight="31.0" prefWidth="70.0" text="Start" />
+      <Button id="btnStop" fx:id="btnStop" disable="true" layoutX="544.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleButtonStop" prefHeight="31.0" prefWidth="70.0" text="Stop" />
+      <Label layoutX="14.0" layoutY="208.0" text="Download path:" />
+      <TextField id="txtDownloadPath" fx:id="txtDownloadPath" editable="false" layoutX="130.0" layoutY="203.0" prefHeight="31.0" prefWidth="454.0" />
+      <Button id="btnSelectDownloadPath" fx:id="btnSelectDownloadPath" layoutX="584.0" layoutY="203.0" mnemonicParsing="false" onAction="#handleButtonSelectDownloadPath" text="..." />
+      <Separator layoutY="294.0" prefHeight="3.0" prefWidth="628.0" />
+      <TitledPane animated="false" layoutX="14.0" layoutY="63.0" prefHeight="115.0" prefWidth="131.0" text="Blog Type">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="47.0" prefWidth="129.0">
+               <children>
+                  <RadioButton id="optLikes" fx:id="optLikes" layoutX="14.0" layoutY="45.0" mnemonicParsing="false" text="Likes">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="PostType" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton id="optPosts" fx:id="optPosts" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="Posts" toggleGroup="$PostType" />
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
+      <TitledPane animated="false" layoutX="161.0" layoutY="63.0" prefHeight="115.0" prefWidth="131.0" text="Content Type">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="47.0" prefWidth="129.0">
+               <children>
+                  <CheckBox id="chkVideos" fx:id="chkVideo" layoutX="14.0" layoutY="42.0" mnemonicParsing="false" selected="true" text="Videos" />
+                  <CheckBox id="chkImages" fx:id="chkImage" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="Images" />
+               </children>
+            </AnchorPane>
+         </content>
+      </TitledPane>
+      <TitledPane animated="false" layoutX="308.0" layoutY="63.0" prefHeight="115.0" prefWidth="306.0" text="Download range">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <CheckBox id="chkStartFrom" fx:id="chkStartFrom" layoutX="15.0" layoutY="16.0" mnemonicParsing="false" text="Start from post" />
+                  <TextField id="txtStartPos" fx:id="txtStartPos" alignment="CENTER_RIGHT" layoutX="159.0" layoutY="11.0" prefHeight="31.0" prefWidth="131.0" text="0" />
+                  <TextField id="txtStopPos" fx:id="txtStopPos" alignment="CENTER_RIGHT" layoutX="159.0" layoutY="47.0" prefHeight="31.0" prefWidth="131.0" text="0" />
+                  <CheckBox id="chkStopAt" fx:id="chkStopAt" layoutX="15.0" layoutY="52.0" mnemonicParsing="false" text="Stop at post" />
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
+      <TextArea id="txtLog" fx:id="txtLog" editable="false" layoutX="14.0" layoutY="419.0" prefHeight="198.0" prefWidth="601.0" />
+      <TableView fx:id="tblStatus" layoutX="14.0" layoutY="308.0" prefHeight="100.0" prefWidth="601.0">
+        <columns>
+          <TableColumn fx:id="colType" editable="false" prefWidth="151.0" sortable="false" text="Type" />
+          <TableColumn fx:id="colDownloaded" editable="false" minWidth="0.0" prefWidth="156.0" sortable="false" text="Downloaded" />
+            <TableColumn fx:id="colSkipped" editable="false" prefWidth="147.0" sortable="false" text="Skipped" />
+            <TableColumn fx:id="colFailed" editable="false" prefWidth="145.0" sortable="false" text="Failed" />
+        </columns>
+      </TableView>
+      <Separator layoutX="-1.0" layoutY="193.0" prefHeight="3.0" prefWidth="628.0" />
+      <Label layoutX="269.0" layoutY="261.0" prefHeight="21.0" prefWidth="119.0" text="Filenames stored:" />
+      <Label fx:id="lblFileAmount" layoutX="391.0" layoutY="261.0" prefHeight="21.0" prefWidth="85.0" text="0" />
+      <Button fx:id="btnReinitialize" layoutX="480.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleButtonReinitialize" prefHeight="31.0" prefWidth="132.0" text="Reinitialize DB" />
+      <CheckBox fx:id="chkUniqueCheck" layoutX="14.0" layoutY="261.0" mnemonicParsing="false" onAction="#handleUnqiueCheckAction" prefHeight="21.0" prefWidth="245.0" text="Perform filename unique check" />
+      <Separator layoutX="-1.0" layoutY="247.0" prefHeight="3.0" prefWidth="628.0" />
+    </children>
+</AnchorPane>
