@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class App extends Application
 {
@@ -19,6 +20,10 @@ public class App extends Application
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+
+        stage.setOnCloseRequest((WindowEvent e) -> {
+            Settings.save();
+        });
     }
 
     /**
