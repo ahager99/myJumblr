@@ -13,15 +13,20 @@ import com.tumblr.jumblr.types.Blog;
 import com.tumblr.jumblr.types.Photo;
 import com.tumblr.jumblr.types.PhotoPost;
 import com.tumblr.jumblr.types.Post;
+import com.tumblr.jumblr.types.QuotePost;
 import com.tumblr.jumblr.types.Video;
 import com.tumblr.jumblr.types.VideoPost;
+import com.tumblr.jumblr.types.Post.PostType;
 import com.tumblr.jumblr.types.SourceInterface;
+import com.tumblr.jumblr.types.TextPost;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +124,10 @@ public abstract class TumblrTask extends Task<Void> {
     }
     
     private void downloadSinglePost(Post post) {
-        switch(post.getType()) {
+        PostType type = post.getType();
+        
+        // Downloading regular post elements
+        switch(type) {
            case PHOTO:
                if (Settings.getImage()) {
                     downloadPhoto((PhotoPost)post);
@@ -131,7 +139,23 @@ public abstract class TumblrTask extends Task<Void> {
                }
                break;
            default:
-       }       
+                
+       }    
+       
+       // Downloading figures elements of posts
+       List<SourceInterface> objList = new ArrayList<SourceInterface>();
+       switch (type) {
+           case PHOTO: objList = SourceInterface.parseFigures(((PhotoPost)post).getCaption());
+                       break;
+           case TEXT:  objList = SourceInterface.parseFigures(((TextPost)post).getBody());
+                       break;
+           case QUOTE: objList = SourceInterface.parseFigures(((QuotePost)post).getSource());
+                       break;
+           default:
+       }
+       for(SourceInterface obj : objList) {
+           downloadObject(obj, Settings.getTargetPath());
+       }
     }
     
     
