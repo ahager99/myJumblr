@@ -6,7 +6,7 @@
 package ahager.tutorial.tumblr;
 
 import com.tumblr.jumblr.JumblrClient;
-import com.tumblr.jumblr.types.SourceInterface;
+import com.tumblr.jumblr.download.DownloadItem;
 
 import ahager.tutorial.download.DownloadStatus;
 import java.sql.Timestamp;
@@ -89,7 +89,7 @@ public abstract class TumblrService extends Service<Void> {
             }
 
             @Override
-            void downloaded(Class<? extends SourceInterface> aClass, DownloadStatus status) {
+            void downloaded(DownloadItem aClass, DownloadStatus status) {
                 downloadedObject(aClass, status);
             }
         };
@@ -105,5 +105,5 @@ public abstract class TumblrService extends Service<Void> {
 
 
     protected abstract void logTaskInformation(String text);
-    protected abstract void downloadedObject(Class<? extends SourceInterface> aClass, DownloadStatus status); 
+    protected abstract void downloadedObject(DownloadItem aClass, DownloadStatus status); 
 }

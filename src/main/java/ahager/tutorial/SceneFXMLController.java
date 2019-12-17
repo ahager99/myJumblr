@@ -12,15 +12,28 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import com.tumblr.jumblr.types.PhotoSize;
-import com.tumblr.jumblr.types.SourceInterface;
-import com.tumblr.jumblr.types.Video;
+import com.tumblr.jumblr.download.DownloadItem;
+import com.tumblr.jumblr.types.Post.PostType;
 
 import org.apache.commons.lang3.StringUtils;
 
+import ahager.tutorial.DB.DBHelper;
+import ahager.tutorial.download.DownloadInformation;
+import ahager.tutorial.download.DownloadStatus;
+import ahager.tutorial.tumblr.TumblrService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -30,25 +43,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.concurrent.ScheduledService;
-import javafx.concurrent.Task;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
 import javafx.stage.DirectoryChooser;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.stage.Stage;
 import javafx.stage.Modality;
-import javafx.scene.Scene;
-import javafx.concurrent.Worker;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import ahager.tutorial.DB.DBHelper;
-import ahager.tutorial.download.DownloadInformation;
-import ahager.tutorial.download.DownloadStatus;
-import ahager.tutorial.tumblr.TumblrService;
 
 
 public class SceneFXMLController implements Initializable {
@@ -363,10 +361,10 @@ public class SceneFXMLController implements Initializable {
             }
 
             @Override
-            protected void downloadedObject(Class<? extends SourceInterface> aClass, DownloadStatus status) {
-                if (aClass.equals(PhotoSize.class)) {
+            protected void downloadedObject(DownloadItem aClass, DownloadStatus status) {
+                if (aClass.getType() == PostType.PHOTO) {
                     imageInformation.add(status);
-                } else if (aClass.equals(Video.class)) {
+                } else if (aClass.getType() == PostType.VIDEO) {
                     videoInformation.add(status);
                 }
             }

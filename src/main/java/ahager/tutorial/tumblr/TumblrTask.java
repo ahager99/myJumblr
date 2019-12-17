@@ -5,34 +5,29 @@
  */
 package ahager.tutorial.tumblr;
 
-import ahager.tutorial.DB.DBHelper;
-import ahager.tutorial.Settings;
-import ahager.tutorial.download.DownloadStatus;
-import com.tumblr.jumblr.JumblrClient;
-import com.tumblr.jumblr.types.Blog;
-import com.tumblr.jumblr.types.Photo;
-import com.tumblr.jumblr.types.PhotoPost;
-import com.tumblr.jumblr.types.Post;
-import com.tumblr.jumblr.types.QuotePost;
-import com.tumblr.jumblr.types.Video;
-import com.tumblr.jumblr.types.VideoPost;
-import com.tumblr.jumblr.types.Post.PostType;
-import com.tumblr.jumblr.types.SourceInterface;
-import com.tumblr.jumblr.types.TextPost;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.tumblr.jumblr.JumblrClient;
+import com.tumblr.jumblr.download.DownloadItem;
+import com.tumblr.jumblr.types.Blog;
+import com.tumblr.jumblr.types.Post;
+import com.tumblr.jumblr.types.Post.PostType;
+
 import org.apache.commons.io.FileUtils;
+
+import ahager.tutorial.Settings;
+import ahager.tutorial.DB.DBHelper;
+import ahager.tutorial.download.DownloadStatus;
 import javafx.concurrent.Task;
 
 /**
@@ -57,7 +52,7 @@ public abstract class TumblrTask extends Task<Void> {
     
     
     
-    private void downloadObject(SourceInterface obj, String downloadDir)
+    private void downloadSingleItem(DownloadItem obj, String downloadDir)
     {
         URL url;
         String filename = "?????";
@@ -65,98 +60,49 @@ public abstract class TumblrTask extends Task<Void> {
         DownloadStatus status = null;
         String statusText = "";
         
-        logInformationWithDate("Processing " + obj.getFileName());
+        logInformationWithDate(obj.getFilename());
         for (int i=0; i<retries && !success; i++) {
-            try {
-                url = new URL(obj.getSrc());
-                File targetFile = new File(downloadDir + File.separator + obj.getFileName());
-                filename = targetFile.getName();
-                boolean fileExists = targetFile.exists() && !targetFile.isDirectory();
-                boolean dbExists = Settings.getUniqueCheck() && DBHelper.exists(filename);
-                if (!fileExists && !dbExists) {
-                    FileUtils.copyURLToFile(url, targetFile, secsConnectTimeout*1000, secsReadTimeout*1000);
-                    status = DownloadStatus.Downloaded;
-                    statusText = "DOWNLOADED";
-                } else {
-                    status = DownloadStatus.Skipped;
-                    statusText = "SKIPPED";
+
+            if ((Settings.getImage() && obj.getType() == PostType.PHOTO) ||
+                (Settings.getVideo() && obj.getType() == PostType.VIDEO)) {
+                try {
+                    url = new URL(obj.getUrl());
+                    File targetFile = new File(downloadDir + File.separator + obj.getFilename());
+                    filename = targetFile.getName();
+                    boolean fileExists = targetFile.exists() && !targetFile.isDirectory();
+                    boolean dbExists = Settings.getUniqueCheck() && DBHelper.exists(filename);
+                    if (!fileExists && !dbExists) {
+                        FileUtils.copyURLToFile(url, targetFile, secsConnectTimeout*1000, secsReadTimeout*1000);
+                        status = DownloadStatus.Downloaded;
+                        statusText = "DOWNLOADED";
+                    } else {
+                        status = DownloadStatus.Skipped;
+                        statusText = "EXISTS";
+                    }
+                    if (!dbExists) {
+                        DBHelper.add(filename);
+                    }
+                    success = true;
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(TumblrTask.class.getName()).log(Level.SEVERE, null, ex);
+                    statusText = "URLEXCEPTION";
+                    status = DownloadStatus.Failed;
+                } catch (IOException ex) {
+                    Logger.getLogger(TumblrTask.class.getName()).log(Level.SEVERE, null, ex);
+                    statusText = "IOEXCEPTION";
+                    status = DownloadStatus.Failed;
                 }
-                if (!dbExists) {
-                    DBHelper.add(filename);
-                }
-                success = true;
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(TumblrTask.class.getName()).log(Level.SEVERE, null, ex);
-                statusText = "URLEXCEPTION";
-                status = DownloadStatus.Failed;
-            } catch (IOException ex) {
-                Logger.getLogger(TumblrTask.class.getName()).log(Level.SEVERE, null, ex);
-                statusText = "IOEXCEPTION";
-                status = DownloadStatus.Failed;
+            } else {
+                status = DownloadStatus.Skipped;
+                statusText = "SKIPPED";
             }
         }
+
+ 
         logInformation(" " + statusText + System.lineSeparator());
         
-        downloaded(obj.getClass(), status);
-    }    
-    
-    
-    private void downloadPhoto(PhotoPost post) {
-        for(Photo photo : post.getPhotos()) {
-            downloadObject(photo.getOriginalSize(), Settings.getTargetPath());
-        }
-    }
-    
-    private void downloadVideo(VideoPost post) {
-        
-        Integer maxWidth = null;
-        Video maxVideo = null;
-        
-        for(Video video : post.getVideos()) {                   
-            if (maxWidth == null || maxVideo.getWidth() < video.getWidth()) {
-                maxWidth = video.getWidth();
-                maxVideo = video;
-            }
-        }
-        if (maxVideo != null) {
-            downloadObject(maxVideo, Settings.getTargetPath());
-        }
-    }
-    
-    private void downloadSinglePost(Post post) {
-        PostType type = post.getType();
-        
-        // Downloading regular post elements
-        switch(type) {
-           case PHOTO:
-               if (Settings.getImage()) {
-                    downloadPhoto((PhotoPost)post);
-               }
-               break;
-           case VIDEO:
-               if (Settings.getVideo()) {
-                   downloadVideo((VideoPost)post);
-               }
-               break;
-           default:
-                
-       }    
-       
-       // Downloading figures elements of posts
-       List<SourceInterface> objList = new ArrayList<SourceInterface>();
-       switch (type) {
-           case PHOTO: objList = SourceInterface.parseFigures(((PhotoPost)post).getCaption());
-                       break;
-           case TEXT:  objList = SourceInterface.parseFigures(((TextPost)post).getBody());
-                       break;
-           case QUOTE: objList = SourceInterface.parseFigures(((QuotePost)post).getSource());
-                       break;
-           default:
-       }
-       for(SourceInterface obj : objList) {
-           downloadObject(obj, Settings.getTargetPath());
-       }
-    }
+        downloaded(obj, status);
+    }  
     
     
     private boolean shouldStop(int pos) {
@@ -195,8 +141,12 @@ public abstract class TumblrTask extends Task<Void> {
                 break;
             }
             for (Post post : postList) {
-                downloadSinglePost(post);
                 i++;
+                logInformation("                                   Post #" + i + ": " + post.getType().toString() + System.lineSeparator());
+                for (DownloadItem item : post.getDownloadItems()) {
+                    downloadSingleItem(item, Settings.getTargetPath());
+                }
+                
                 if (shouldStop(i)) {
                     break;
                 }
@@ -213,5 +163,5 @@ public abstract class TumblrTask extends Task<Void> {
     }
 
     abstract void logInformation(String text);
-    abstract void downloaded(Class<? extends SourceInterface> aClass, DownloadStatus status);
+    abstract void downloaded(DownloadItem aClass, DownloadStatus status);
 }
