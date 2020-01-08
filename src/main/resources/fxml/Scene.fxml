@@ -94,6 +94,7 @@
                               <CheckBox id="chkStopAt" fx:id="chkStopAt" mnemonicParsing="false" text="Stop at post" GridPane.rowIndex="1" />
                               <TextField id="txtStopPos" fx:id="txtStopPos" alignment="CENTER_RIGHT" maxWidth="-Infinity" minHeight="-Infinity" prefWidth="130.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <CheckBox id="chkIgnoreEmpty" fx:id="chkIgnoreEmpty" mnemonicParsing="false" text="Ignore empty posts" GridPane.rowIndex="2" />
+                              <TextField id="txtStopPos" fx:id="txtEmptyCnt" alignment="CENTER_RIGHT" layoutX="204.0" layoutY="60.0" maxWidth="-Infinity" minHeight="-Infinity" prefWidth="130.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                      </content>

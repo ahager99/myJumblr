@@ -34,6 +34,7 @@ public class Settings {
     private static final String TARGETPATH = "TARGETPATH";
     private static final String UNIQUECHECK = "UNIQUECHECK";
     private static final String IGNOREEMPTY = "IGNOREEMPTY";
+    private static final String EMPTYCNT = "EMPTYCNT";
     
     private static String blogName;
     private static Integer intBlogType;
@@ -47,6 +48,7 @@ public class Settings {
     private static String targetPath;
     private static boolean blnUniqueCheck;
     private static boolean blnIgnoreEmpty;
+    private static Integer intEmptyCnt;
    
     
     
@@ -62,6 +64,7 @@ public class Settings {
         blnUniqueCheck = true;
         settingPath = "settings.conf";
         blnIgnoreEmpty = false;
+        intEmptyCnt = null;
     }
 
     
@@ -241,6 +244,7 @@ public class Settings {
         props.setProperty(IGNOREEMPTY, booleanToString(blnIgnoreEmpty));
         props.setProperty(STARTPOS, integerToString(intStartPos));
         props.setProperty(STOPPOS, integerToString(intStopPos));
+        props.setProperty(EMPTYCNT, integerToString(intEmptyCnt));
         if (targetPath == null) {
             props.setProperty(TARGETPATH, "");
         } else {
@@ -276,6 +280,7 @@ public class Settings {
                 setIgnoreEmpty(props.getProperty(IGNOREEMPTY, "0"));
                 setStartFrom(props.getProperty(STARTPOS));
                 setStopPos(props.getProperty(STOPPOS));
+                setEmptyCnt(props.getProperty(EMPTYCNT));
                 setUniqueCheck(props.getProperty(UNIQUECHECK,"1"));
                 targetPath = props.getProperty(TARGETPATH);
             } catch (IOException ex) {
@@ -306,5 +311,22 @@ public class Settings {
              blnIgnoreEmpty = (value == 1);
         }   
     }
+
+
+    public static Integer getEmptyCnt() {
+        return intEmptyCnt;
+    }
+    
+    public static void setEmptyCnt(Integer emptyCnt) {
+        intEmptyCnt = emptyCnt;
+    }
+    
+    private static void setEmptyCnt(String emptyCnt) {
+         if (emptyCnt == null || emptyCnt.isEmpty() || !StringUtils.isNumeric(emptyCnt)) {
+            intEmptyCnt = null;
+        } else {
+            intEmptyCnt = new Integer(emptyCnt);
+        }       
+    }   
     
 }

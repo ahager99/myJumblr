@@ -120,16 +120,21 @@ public abstract class TumblrTask extends Task<Void> {
     protected Void call() throws Exception  {
         Map<String, Integer> options;
         
+        int postCnt = 0;
+        int emptyIgnored = 0;
+
+        // Store blog name for logging
         blog = client.blogInfo(Settings.getBlogName());       
         
-        int i = 0;
+        // Setting start position if not loop from beginning
         if (Settings.getStartFrom() && Settings.getStartPos() != null) {
-            i = Settings.getStartPos();
+            postCnt = Settings.getStartPos();
         }
         
-        while(!shouldStop(i)) {
+        // Loop until end is reached ot cancelled by user
+        while(!shouldStop(postCnt)) {
             options = new HashMap<>();
-            options.put("offset", i);
+            options.put("offset", postCnt);
             
             List<Post> postList;
             if (Settings.getBlogType() == 0) {
@@ -137,21 +142,28 @@ public abstract class TumblrTask extends Task<Void> {
             } else {
                 postList = blog.likedPosts(options);
             }
-            if (postList.isEmpty()) { 
-                if (!Settings.getIgnoreEmpty())
+
+            // If no posts are fetched continue related to settings. This is needed because
+            // sometimes leaks returned
+            if (postList.isEmpty()) {
+                emptyIgnored++; 
+                if (!Settings.getIgnoreEmpty() || emptyIgnored > Settings.getEmptyCnt())
                     break;
 
-                logInformation("                                   Empty offset #" + i + System.lineSeparator());
-                i++;
+                logInformation("                                   Empty offset #" + postCnt + " - ignored " + emptyIgnored + "/" +  Settings.getEmptyCnt() + System.lineSeparator());
+                postCnt++;
             }
+            
+            // Perform the return posts
             for (Post post : postList) {
-                i++;
-                logInformation("                                   Post #" + i + ": " + post.getType().toString() + System.lineSeparator());
+                postCnt++;
+                emptyIgnored = 0; // reset empty ignored, so only direct following leaks are counted
+                logInformation("                                   Post #" + postCnt + ": " + post.getType().toString() + System.lineSeparator());
                 for (DownloadItem item : post.getDownloadItems()) {
                     downloadSingleItem(item, Settings.getTargetPath());
                 }
                 
-                if (shouldStop(i)) {
+                if (shouldStop(postCnt)) {
                     break;
                 }
             }        

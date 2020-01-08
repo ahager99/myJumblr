@@ -107,6 +107,8 @@ public class SceneFXMLController implements Initializable {
     private Button btnSelectDownloadPath;
     @FXML
     private CheckBox chkIgnoreEmpty;
+    @FXML 
+    private TextField txtEmptyCnt;
 
 
     @FXML
@@ -189,6 +191,7 @@ public class SceneFXMLController implements Initializable {
         btnSelectDownloadPath.setDisable(disable);
         chkUniqueCheck.setDisable(disable);
         chkIgnoreEmpty.setDisable(disable);
+        txtEmptyCnt.setDisable(disable);
         if (disable) {
             btnReinitialize.setDisable(disable);
         } else {
@@ -243,6 +246,11 @@ public class SceneFXMLController implements Initializable {
         } else {
             txtStopPos.setText(Settings.getStopPos().toString());
         }
+        if (Settings.getEmptyCnt() == null) {
+            txtEmptyCnt.setText("");
+        } else {
+            txtEmptyCnt.setText(Settings.getEmptyCnt().toString());
+        }
     }
     
     
@@ -269,6 +277,11 @@ public class SceneFXMLController implements Initializable {
             Settings.setStopPos(new Integer(txtStopPos.getText()));
         } else {
             Settings.setStopPos(null);
+        }
+        if (!txtEmptyCnt.getText().isEmpty() && StringUtils.isNumeric(txtEmptyCnt.getText())) {
+            Settings.setEmptyCnt(new Integer(txtEmptyCnt.getText()));
+        } else {
+            Settings.setEmptyCnt(null);
         }
         Settings.save();
     }
