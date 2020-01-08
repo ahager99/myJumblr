@@ -137,8 +137,12 @@ public abstract class TumblrTask extends Task<Void> {
             } else {
                 postList = blog.likedPosts(options);
             }
-            if (postList.isEmpty()) {
-                break;
+            if (postList.isEmpty()) { 
+                if (!Settings.getIgnoreEmpty())
+                    break;
+
+                logInformation("                                   Empty offset #" + i + System.lineSeparator());
+                i++;
             }
             for (Post post : postList) {
                 i++;

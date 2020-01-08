@@ -33,6 +33,7 @@ public class Settings {
     private static final String STOPPOS = "STOPPOS";
     private static final String TARGETPATH = "TARGETPATH";
     private static final String UNIQUECHECK = "UNIQUECHECK";
+    private static final String IGNOREEMPTY = "IGNOREEMPTY";
     
     private static String blogName;
     private static Integer intBlogType;
@@ -45,6 +46,7 @@ public class Settings {
     private static String settingPath;
     private static String targetPath;
     private static boolean blnUniqueCheck;
+    private static boolean blnIgnoreEmpty;
    
     
     
@@ -59,6 +61,7 @@ public class Settings {
         intStopPos = null;   
         blnUniqueCheck = true;
         settingPath = "settings.conf";
+        blnIgnoreEmpty = false;
     }
 
     
@@ -235,6 +238,7 @@ public class Settings {
         props.setProperty(VIDEO, booleanToString(blnVideo));
         props.setProperty(STARTFROM, booleanToString(blnStartFrom));
         props.setProperty(STOPAT, booleanToString(blnStopAt));
+        props.setProperty(IGNOREEMPTY, booleanToString(blnIgnoreEmpty));
         props.setProperty(STARTPOS, integerToString(intStartPos));
         props.setProperty(STOPPOS, integerToString(intStopPos));
         if (targetPath == null) {
@@ -269,6 +273,7 @@ public class Settings {
                 setVideo(props.getProperty(VIDEO, "1"));
                 setStartFrom(props.getProperty(STARTFROM, "0"));
                 setStopAt(props.getProperty(STOPAT, "0"));
+                setIgnoreEmpty(props.getProperty(IGNOREEMPTY, "0"));
                 setStartFrom(props.getProperty(STARTPOS));
                 setStopPos(props.getProperty(STOPPOS));
                 setUniqueCheck(props.getProperty(UNIQUECHECK,"1"));
@@ -283,6 +288,23 @@ public class Settings {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+
+    public static boolean getIgnoreEmpty() {
+        return blnIgnoreEmpty;
+    }
+
+    public static void setIgnoreEmpty(boolean ignoreEmpty) {
+        blnIgnoreEmpty = ignoreEmpty; 
+    }
+
+    public static void setIgnoreEmpty(String ignoreEmpty) {
+        if (ignoreEmpty == null || ignoreEmpty.isEmpty() || !StringUtils.isNumeric(ignoreEmpty)) {
+            blnIgnoreEmpty = false;
+        } else {
+             Integer value = new Integer(ignoreEmpty);
+             blnIgnoreEmpty = (value == 1);
+        }   
     }
     
 }

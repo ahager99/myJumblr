@@ -105,6 +105,8 @@ public class SceneFXMLController implements Initializable {
     private CheckBox chkUniqueCheck;
     @FXML
     private Button btnSelectDownloadPath;
+    @FXML
+    private CheckBox chkIgnoreEmpty;
 
 
     @FXML
@@ -186,6 +188,7 @@ public class SceneFXMLController implements Initializable {
         txtDownloadPath.setDisable(disable);
         btnSelectDownloadPath.setDisable(disable);
         chkUniqueCheck.setDisable(disable);
+        chkIgnoreEmpty.setDisable(disable);
         if (disable) {
             btnReinitialize.setDisable(disable);
         } else {
@@ -228,6 +231,7 @@ public class SceneFXMLController implements Initializable {
         chkVideo.setSelected(Settings.getVideo());
         chkStartFrom.setSelected(Settings.getStartFrom());
         chkStopAt.setSelected(Settings.getStopAt());
+        chkIgnoreEmpty.setSelected(Settings.getIgnoreEmpty());
         chkUniqueCheck.setSelected(Settings.getUniqueCheck());
         if (Settings.getStartPos() == null) {
             txtStartPos.setText("");
@@ -254,6 +258,7 @@ public class SceneFXMLController implements Initializable {
         Settings.setVideo(chkVideo.isSelected());
         Settings.setStartFrom(chkStartFrom.isSelected());
         Settings.setStopAt(chkStopAt.isSelected());
+        Settings.setIgnoreEmpty(chkIgnoreEmpty.isSelected());
         Settings.setUniqueCheck(chkUniqueCheck.isSelected());
         if (!txtStartPos.getText().isEmpty() && StringUtils.isNumeric(txtStartPos.getText())) {
             Settings.setStartPos(new Integer(txtStartPos.getText()));

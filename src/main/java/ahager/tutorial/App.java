@@ -18,7 +18,7 @@ public class App extends Application
 
         stage.setTitle("Jumblr Downloader");
         stage.setScene(scene);
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.show();
 
         stage.setOnCloseRequest((WindowEvent e) -> {

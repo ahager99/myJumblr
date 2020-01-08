@@ -1,73 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="633.0" prefWidth="628.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ahager.tutorial.SceneFXMLController">
+<AnchorPane id="AnchorPane" prefHeight="633.0" prefWidth="766.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ahager.tutorial.SceneFXMLController">
     <children>
-      <Label layoutX="14.0" layoutY="14.0" text="Blogname:" />
-      <TextField id="txtBlogName" fx:id="txtBlogName" layoutX="99.0" layoutY="9.0" prefHeight="31.0" prefWidth="361.0" />
-      <Button id="btnStart" fx:id="btnStart" layoutX="467.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleButtonStart" prefHeight="31.0" prefWidth="70.0" text="Start" />
-      <Button id="btnStop" fx:id="btnStop" disable="true" layoutX="544.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleButtonStop" prefHeight="31.0" prefWidth="70.0" text="Stop" />
-      <Label layoutX="14.0" layoutY="208.0" text="Download path:" />
-      <TextField id="txtDownloadPath" fx:id="txtDownloadPath" editable="false" layoutX="130.0" layoutY="203.0" prefHeight="31.0" prefWidth="454.0" />
-      <Button id="btnSelectDownloadPath" fx:id="btnSelectDownloadPath" layoutX="584.0" layoutY="203.0" mnemonicParsing="false" onAction="#handleButtonSelectDownloadPath" text="..." />
-      <Separator layoutY="294.0" prefHeight="3.0" prefWidth="628.0" />
-      <TitledPane animated="false" layoutX="14.0" layoutY="63.0" prefHeight="115.0" prefWidth="131.0" text="Blog Type">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="47.0" prefWidth="129.0">
+      <VBox layoutX="7.0" layoutY="18.0" prefHeight="493.0" prefWidth="740.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="13.0">
+         <children>
+            <HBox prefHeight="31.0" prefWidth="740.0" spacing="3.0" VBox.vgrow="NEVER">
                <children>
-                  <RadioButton id="optLikes" fx:id="optLikes" layoutX="14.0" layoutY="45.0" mnemonicParsing="false" text="Likes">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="PostType" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton id="optPosts" fx:id="optPosts" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="Posts" toggleGroup="$PostType" />
+                  <Label maxWidth="-Infinity" minWidth="-Infinity" prefHeight="18.0" prefWidth="71.0" text="Blogname:">
+                     <HBox.margin>
+                        <Insets top="4.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField id="txtBlogName" fx:id="txtBlogName" maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="544.0" HBox.hgrow="ALWAYS">
+                     <padding>
+                        <Insets bottom="1.0" left="2.0" right="2.0" top="1.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button id="btnStart" fx:id="btnStart" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleButtonStart" prefHeight="26.0" prefWidth="55.0" text="Start" />
+                  <Button id="btnStop" fx:id="btnStop" disable="true" maxHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleButtonStop" prefHeight="26.0" prefWidth="55.0" text="Stop" />
                </children>
-            </AnchorPane>
-        </content>
-      </TitledPane>
-      <TitledPane animated="false" layoutX="161.0" layoutY="63.0" prefHeight="115.0" prefWidth="131.0" text="Content Type">
-         <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="47.0" prefWidth="129.0">
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </HBox>
+            <Separator prefHeight="3.0" prefWidth="628.0" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets bottom="3.0" top="5.0" />
+               </VBox.margin>
+            </Separator>
+            <HBox prefHeight="154.0" prefWidth="740.0" spacing="4.0" VBox.vgrow="NEVER">
                <children>
-                  <CheckBox id="chkVideos" fx:id="chkVideo" layoutX="14.0" layoutY="42.0" mnemonicParsing="false" selected="true" text="Videos" />
-                  <CheckBox id="chkImages" fx:id="chkImage" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="Images" />
+                  <TitledPane animated="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="150.0" prefWidth="131.0" text="Blog Type">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0">
+                           <children>
+                              <RadioButton id="optPosts" fx:id="optPosts" mnemonicParsing="false" selected="true" text="Posts">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="PostType" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton id="optLikes" fx:id="optLikes" mnemonicParsing="false" text="Likes" toggleGroup="$PostType" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+                  <TitledPane animated="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="150.0" prefWidth="131.0" text="Content Type">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0">
+                           <children>
+                              <CheckBox id="chkImages" fx:id="chkImage" mnemonicParsing="false" selected="true" text="Images" />
+                              <CheckBox id="chkVideos" fx:id="chkVideo" mnemonicParsing="false" selected="true" text="Videos" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+                  <TitledPane animated="false" prefHeight="150.0" prefWidth="337.0" text="Download range">
+                     <content>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="206.0" minWidth="10.0" prefWidth="183.5999755859375" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="152.40002441406253" minWidth="10.0" prefWidth="132.40002441406253" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <CheckBox id="chkStartFrom" fx:id="chkStartFrom" mnemonicParsing="false" text="Start from post" />
+                              <TextField id="txtStartPos" fx:id="txtStartPos" alignment="CENTER_RIGHT" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="130.0" text="0" GridPane.columnIndex="1" />
+                              <CheckBox id="chkStopAt" fx:id="chkStopAt" mnemonicParsing="false" text="Stop at post" GridPane.rowIndex="1" />
+                              <TextField id="txtStopPos" fx:id="txtStopPos" alignment="CENTER_RIGHT" maxWidth="-Infinity" minHeight="-Infinity" prefWidth="130.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <CheckBox id="chkIgnoreEmpty" fx:id="chkIgnoreEmpty" mnemonicParsing="false" text="Ignore empty posts" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
+                     </content>
+                  </TitledPane>
                </children>
-            </AnchorPane>
-         </content>
-      </TitledPane>
-      <TitledPane animated="false" layoutX="308.0" layoutY="63.0" prefHeight="115.0" prefWidth="306.0" text="Download range">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="3.0" />
+               </VBox.margin>
+            </HBox>
+            <Separator prefHeight="3.0" prefWidth="628.0" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets bottom="5.0" top="7.0" />
+               </VBox.margin>
+            </Separator>
+            <HBox prefHeight="25.0" prefWidth="740.0" spacing="3.0" VBox.vgrow="NEVER">
                <children>
-                  <CheckBox id="chkStartFrom" fx:id="chkStartFrom" layoutX="15.0" layoutY="16.0" mnemonicParsing="false" text="Start from post" />
-                  <TextField id="txtStartPos" fx:id="txtStartPos" alignment="CENTER_RIGHT" layoutX="159.0" layoutY="11.0" prefHeight="31.0" prefWidth="131.0" text="0" />
-                  <TextField id="txtStopPos" fx:id="txtStopPos" alignment="CENTER_RIGHT" layoutX="159.0" layoutY="47.0" prefHeight="31.0" prefWidth="131.0" text="0" />
-                  <CheckBox id="chkStopAt" fx:id="chkStopAt" layoutX="15.0" layoutY="52.0" mnemonicParsing="false" text="Stop at post" />
+                  <Label maxWidth="-Infinity" minWidth="-Infinity" prefHeight="18.0" prefWidth="116.0" text="Download path:">
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField id="txtDownloadPath" fx:id="txtDownloadPath" editable="false" maxHeight="1.7976931348623157E308" prefHeight="26.0" prefWidth="619.0" HBox.hgrow="ALWAYS" />
+                  <Button id="btnSelectDownloadPath" fx:id="btnSelectDownloadPath" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleButtonSelectDownloadPath" prefHeight="26.0" prefWidth="34.0" text="..." />
                </children>
-            </AnchorPane>
-        </content>
-      </TitledPane>
-      <TextArea id="txtLog" fx:id="txtLog" editable="false" layoutX="14.0" layoutY="419.0" prefHeight="198.0" prefWidth="601.0" />
-      <TableView fx:id="tblStatus" layoutX="14.0" layoutY="308.0" prefHeight="100.0" prefWidth="601.0">
-        <columns>
-          <TableColumn fx:id="colType" editable="false" prefWidth="151.0" sortable="false" text="Type" />
-          <TableColumn fx:id="colDownloaded" editable="false" minWidth="0.0" prefWidth="156.0" sortable="false" text="Downloaded" />
-            <TableColumn fx:id="colSkipped" editable="false" prefWidth="147.0" sortable="false" text="Skipped" />
-            <TableColumn fx:id="colFailed" editable="false" prefWidth="145.0" sortable="false" text="Failed" />
-        </columns>
-      </TableView>
-      <Separator layoutX="-1.0" layoutY="193.0" prefHeight="3.0" prefWidth="628.0" />
-      <Label layoutX="269.0" layoutY="261.0" prefHeight="21.0" prefWidth="119.0" text="Filenames stored:" />
-      <Label fx:id="lblFileAmount" layoutX="391.0" layoutY="261.0" prefHeight="21.0" prefWidth="85.0" text="0" />
-      <Button fx:id="btnReinitialize" layoutX="480.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleButtonReinitialize" prefHeight="31.0" prefWidth="132.0" text="Reinitialize DB" />
-      <CheckBox fx:id="chkUniqueCheck" layoutX="14.0" layoutY="261.0" mnemonicParsing="false" onAction="#handleUnqiueCheckAction" prefHeight="21.0" prefWidth="245.0" text="Perform filename unique check" />
-      <Separator layoutX="-1.0" layoutY="247.0" prefHeight="3.0" prefWidth="628.0" />
+            </HBox>
+            <Separator prefHeight="3.0" prefWidth="628.0" VBox.vgrow="NEVER">
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </Separator>
+            <HBox prefHeight="32.0" prefWidth="740.0" spacing="3.0" VBox.vgrow="NEVER">
+               <children>
+                  <CheckBox fx:id="chkUniqueCheck" mnemonicParsing="false" onAction="#handleUnqiueCheckAction" prefHeight="22.0" prefWidth="309.0" text="Perform filename unique check">
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <Label prefHeight="22.0" prefWidth="149.0" text="Filenames stored:">
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="lblFileAmount" prefHeight="22.0" prefWidth="175.0" text="0">
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Button fx:id="btnReinitialize" mnemonicParsing="false" onAction="#handleButtonReinitialize" prefHeight="26.0" prefWidth="166.0" text="Reinitialize DB" />
+               </children>
+            </HBox>
+            <Separator prefHeight="3.0" prefWidth="628.0" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </VBox.margin>
+            </Separator>
+            <TableView fx:id="tblStatus" prefHeight="95.0" prefWidth="740.0" VBox.vgrow="NEVER">
+              <columns>
+                <TableColumn fx:id="colType" editable="false" prefWidth="151.0" sortable="false" text="Type" />
+                <TableColumn fx:id="colDownloaded" editable="false" minWidth="0.0" prefWidth="156.0" sortable="false" text="Downloaded" />
+                  <TableColumn fx:id="colSkipped" editable="false" prefWidth="147.0" sortable="false" text="Skipped" />
+                  <TableColumn fx:id="colFailed" editable="false" prefWidth="145.0" sortable="false" text="Failed" />
+              </columns>
+            </TableView>
+            <TextArea id="txtLog" fx:id="txtLog" editable="false" prefHeight="85.0" prefWidth="740.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </TextArea>
+         </children>
+      </VBox>
     </children>
 </AnchorPane>
