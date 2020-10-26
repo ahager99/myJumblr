@@ -52,10 +52,14 @@ public class DBHelper {
     }
     
     public static void compact() {
-        db.compact();
+        if (db != null && !db.isClosed()) {
+         db.compact();
+        }
     }
    
     public static boolean exists(String filename) {
+        if (repo == null) return false;
+
         Cursor<DBFileInfo> files = repo.find(ObjectFilters.eq("filename", filename));
         return files.size() > 0;
     } 
@@ -68,10 +72,14 @@ public class DBHelper {
     } 
     
     public static void reset() {
-        repo.remove(ObjectFilters.ALL);
+        if (repo != null) {
+            repo.remove(ObjectFilters.ALL);
+        }
     }
     
     public static long getFileCount() {
+        if (repo == null) return 0;
+        
         return repo.size();
     }
     

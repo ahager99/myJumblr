@@ -6,7 +6,7 @@
 
   <groupId>ahager.tutorial</groupId>
   <artifactId>myJumblr</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
 
   <name>myJumblr3</name>
 
@@ -38,6 +38,32 @@
       <artifactId>commons-io</artifactId>
       <version>2.6</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.30</version>
+  </dependency>
+  <dependency>
+    <groupId> org.apache.cassandra</groupId>
+    <artifactId>cassandra-all</artifactId>
+    <version>0.8.1</version>
+
+    <exclusions>
+      <exclusion> 
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+      </exclusion>
+      <exclusion> 
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+      </exclusion>
+    </exclusions> 
+  </dependency>
+  <dependency>
+    <groupId>org.hager</groupId>
+    <artifactId>prowser</artifactId>
+    <version>0.2.0</version>
+  </dependency>
   </dependencies>
 
   <build>
@@ -68,6 +94,24 @@
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>
+          <executions>
+            <execution>
+                <id>install-prowser-0.2.0</id>
+                <phase>clean</phase>
+                <configuration>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>org.hager</groupId>
+                    <artifactId>prowser</artifactId>
+                    <version>0.2.0</version>
+                    <file>${project.basedir}/libs/prowser-0.2.0/prowser-0.2.0.jar</file>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+        </executions>
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>

@@ -58,7 +58,6 @@ public class SceneFXMLController implements Initializable {
     private DownloadInformation videoInformation;
     private DownloadInformation imageInformation;
     private ObservableList<DownloadInformation> tableData;
-    private long filesStoredInDB = 0;
     
 
     @FXML    
@@ -143,13 +142,13 @@ public class SceneFXMLController implements Initializable {
         stage.setScene(new Scene(root));
         stage.showAndWait();
         
-        filesStoredInDB = DBHelper.getFileCount();
-        lblFileAmount.setText(Long.toString(filesStoredInDB));
         DBHelper.compact();
+        updateDBCount();
     }
     
     @FXML
     private void handleButtonStart(ActionEvent event) {
+
         saveSettings();
         if (tumblrService.getState() == Worker.State.READY) {
             imageInformation.reset();
@@ -210,9 +209,15 @@ public class SceneFXMLController implements Initializable {
         setButtonStatus(false);
         updateProgressInformation();
         DBHelper.compact(); 
-        filesStoredInDB = DBHelper.getFileCount();
-        lblFileAmount.setText(Long.toString(filesStoredInDB));
+        updateDBCount();
         tumblrService.reset();
+    }
+
+
+
+    private void updateDBCount() {
+        lblFileAmount.setText(Long.toString(DBHelper.getFileCount()));
+        lblFileAmount.requestLayout();
     }
     
     
@@ -297,8 +302,7 @@ public class SceneFXMLController implements Initializable {
                         tableData = FXCollections.observableArrayList(imageInformation, videoInformation);
                         tblStatus.setItems(tableData);
                         tblStatus.refresh();
-                        lblFileAmount.setText(Long.toString(filesStoredInDB));
-                        lblFileAmount.requestLayout();
+                        updateDBCount();
                         return null;
                     }
                 };
@@ -359,8 +363,7 @@ public class SceneFXMLController implements Initializable {
         
         // Initialize unique DB and load file count stored
         DBHelper.open();
-        filesStoredInDB = DBHelper.getFileCount();
-        lblFileAmount.setText(Long.toString(filesStoredInDB));
+        updateDBCount();
 
         // Set correct status of buttons
         btnStart.setDisable(false);

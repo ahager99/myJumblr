@@ -7,6 +7,7 @@ package ahager.tutorial.tumblr;
 
 import com.tumblr.jumblr.JumblrClient;
 import com.tumblr.jumblr.download.DownloadItem;
+import com.zenkey.net.prowser.Prowser;
 
 import ahager.tutorial.download.DownloadStatus;
 import java.sql.Timestamp;
@@ -21,12 +22,16 @@ public abstract class TumblrService extends Service<Void> {
 
     private TumblrTask task;
     private static JumblrClient client;
+    private static Prowser prowser;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
     public TumblrService() {
         if (client == null) {
             client = new JumblrClient("OVPVcW5s5rgKRpBa6ffQsaYKzvuUcbjwJjFM5pyleq3McHcOJ4", "eknWQvHC21rvtXzIrXolh9hhi3p334C3H3pEYlwUzVDQ00cvbh");
             client.setToken("HbEQvpN1dvqlOlK3kQr1au2jGkAha3V0ofQLKAkDaJDILrHhOF", "bSjdQCo3mVc9MIeq2eYnX43AXkohDthzvJZ0kQm9HIUkgQqAjp");
+        }
+        if (prowser == null) {
+            prowser = new Prowser();
         }
     }
 
@@ -82,7 +87,7 @@ public abstract class TumblrService extends Service<Void> {
 
     @Override
     protected TumblrTask createTask() {
-        task = new TumblrTask(client) {
+        task = new TumblrTask(client, prowser) {
             @Override
             void logInformation(String text) {
                 logTaskInformation(text);
