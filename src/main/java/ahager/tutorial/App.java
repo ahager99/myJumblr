@@ -11,7 +11,7 @@ public class App extends Application
 {
     @Override
     public void start(final Stage stage) throws Exception {
-        final Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
+        final Parent root = FXMLLoader.load(getClass().getResource("/fxml/Main.fxml"));
 
         final Scene scene = new Scene(root);
         scene.getStylesheets().add("/styles/Styles.css");
@@ -22,7 +22,7 @@ public class App extends Application
         stage.show();
 
         stage.setOnCloseRequest((WindowEvent e) -> {
-            Settings.save();
+            //Settings.save();
         });
     }
 

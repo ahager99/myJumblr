@@ -32,6 +32,7 @@ import com.zenkey.net.prowser.Tab;
 import org.apache.commons.io.FileUtils;
 
 import ahager.tutorial.Settings;
+import ahager.tutorial.DB.BlogSettings;
 import ahager.tutorial.DB.DBHelper;
 import ahager.tutorial.download.DownloadStatus;
 import javafx.concurrent.Task;
@@ -46,6 +47,11 @@ public abstract class TumblrTask extends Task<Void> {
     private static final int secsReadTimeout = 3;
     private static final int retries = 3;
 
+    private enum BlogType {
+        Posts,
+        Likes
+    }
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
     Blog blog;
@@ -57,7 +63,7 @@ public abstract class TumblrTask extends Task<Void> {
         this.prowser = prowser;
     }
 
-    private void downloadSingleItem(DownloadItem obj, String downloadDir) {
+    private void downloadSingleItem(DownloadItem obj, String downloadDir, BlogSettings blogSetting) {
         URL url;
         String filename = "?????";
         boolean success = false;
@@ -68,8 +74,8 @@ public abstract class TumblrTask extends Task<Void> {
         for (int i = 0; i < retries && !success; i++) {
 
             // Process images and videos
-            if ((Settings.getImage() && obj.getType() == PostType.PHOTO)
-                    || (Settings.getVideo() && obj.getType() == PostType.VIDEO)) {
+            if ((blogSetting.getImage() && obj.getType() == PostType.PHOTO)
+                    || (blogSetting.getVideo() && obj.getType() == PostType.VIDEO)) {
                 try {
                     url = new URL(obj.getUrl());
                     File targetFile = new File(downloadDir + File.separator + obj.getFilename());
@@ -147,39 +153,37 @@ public abstract class TumblrTask extends Task<Void> {
     }  
     
     
-    private boolean shouldStop(int pos) {
+    private boolean shouldStop(BlogSettings blogSetting, int pos) {
         if (this.isCancelled()) {
             return true;
         }
-        if (Settings.getStopAt() && Settings.getStopPos() != null && Settings.getStopPos() < pos) {
+        if (blogSetting.getStopAt() 
+        && blogSetting.getStopPos() != null 
+        && blogSetting.getStopPos() < pos) {
             return true;
         }
         return false;
     }
     
 
-    @Override
-    protected Void call() throws Exception  {
+
+    private void processBlog(BlogType blogType, BlogSettings blogSetting) {
         Map<String, Integer> options;
-        
         int postCnt = 0;
         int emptyIgnored = 0;
 
-        // Store blog name for logging
-        blog = client.blogInfo(Settings.getBlogName());       
-        
-        // Setting start position if not loop from beginning
-        if (Settings.getStartFrom() && Settings.getStartPos() != null) {
-            postCnt = Settings.getStartPos();
+        // Setting start position if -not loop from beginning
+        if (blogSetting.getStartFrom() && blogSetting.getStartPos() != null) {
+            postCnt = blogSetting.getStartPos();
         }
         
         // Loop until end is reached ot cancelled by user
-        while(!shouldStop(postCnt)) {
+        while(!shouldStop(blogSetting, postCnt)) {
             options = new HashMap<>();
             options.put("offset", postCnt);
             
             List<Post> postList;
-            if (Settings.getBlogType() == 0) {
+            if (blogType == BlogType.Posts) {
                 postList = blog.posts(options);
             } else {
                 postList = blog.likedPosts(options);
@@ -189,10 +193,10 @@ public abstract class TumblrTask extends Task<Void> {
             // sometimes leaks returned
             if (postList.isEmpty()) {
                 emptyIgnored++; 
-                if (!Settings.getIgnoreEmpty() || emptyIgnored > Settings.getEmptyCnt())
+                if (!blogSetting.getIgnoreEmpty() || emptyIgnored > blogSetting.getEmptyCnt())
                     break;
 
-                logInformation("                                   Empty offset #" + postCnt + " - ignored " + emptyIgnored + "/" +  Settings.getEmptyCnt() + System.lineSeparator());
+                logInformation("                                   Empty offset #" + postCnt + " - ignored " + emptyIgnored + "/" +  blogSetting.getEmptyCnt() + System.lineSeparator());
                 postCnt++;
             }
             
@@ -202,13 +206,35 @@ public abstract class TumblrTask extends Task<Void> {
                 emptyIgnored = 0; // reset empty ignored, so only direct following leaks are counted
                 logInformation("                                   Post #" + postCnt + ": " + post.getType().toString() + System.lineSeparator());
                 for (DownloadItem item : post.getDownloadItems()) {
-                    downloadSingleItem(item, Settings.getTargetPath());
+                    downloadSingleItem(item, blogSetting.getTargetPath(), blogSetting);
                 }
                 
-                if (shouldStop(postCnt)) {
+                if (shouldStop(blogSetting, postCnt)) {
                     break;
                 }
             }        
+        }
+    }
+    
+
+    @Override
+    protected Void call() throws Exception  {
+       
+        Map<String, BlogSettings> a = Settings.getBlogs();
+        for (BlogSettings blogSetting : Settings.getBlogs().values()) {
+            if (this.isCancelled()) {
+                break;
+            }
+            if (blogSetting.getActive()) {
+                logInformation("+++++++++++++++++++++ Processing blog -->" +  blogSetting.getBlogName() + "<-- +++++++++++++++++++++"  + System.lineSeparator());
+                // Store blog name for logging
+                blog = client.blogInfo(blogSetting.getBlogName());
+                if (blogSetting.getPosts())       
+                    processBlog(BlogType.Posts, blogSetting);
+                
+                if (blogSetting.getLikes())       
+                    processBlog(BlogType.Likes, blogSetting);
+            }
         }
         
         return null;

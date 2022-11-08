@@ -51,7 +51,7 @@ public class LoadingFXMLController implements Initializable {
         DBHelper.close();
         DBHelper.deleteDBFile();
         DBHelper.open();
-        fileService = new FileService(Settings.getTargetPath());
+        fileService = new FileService(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
         lblFileCount.textProperty().bind(fileService.valueProperty());
        
         fileService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {

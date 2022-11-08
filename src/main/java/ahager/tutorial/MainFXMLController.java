@@ -1,6 +1,5 @@
 package ahager.tutorial;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -11,11 +10,8 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
 import com.tumblr.jumblr.download.DownloadItem;
 import com.tumblr.jumblr.types.Post.PostType;
-
-import org.apache.commons.lang3.StringUtils;
 
 import ahager.tutorial.DB.BlogSettings;
 import ahager.tutorial.DB.DBHelper;
@@ -38,19 +34,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
-public class SceneFXMLController implements Initializable {
+public class MainFXMLController implements Initializable {
     
     private TumblrService tumblrService;
     private UIService uiService;
@@ -58,33 +52,30 @@ public class SceneFXMLController implements Initializable {
     private boolean logTextUpdate = false;
     private DownloadInformation videoInformation;
     private DownloadInformation imageInformation;
-    private ObservableList<DownloadInformation> tableData;
+    private ObservableList<DownloadInformation> tableDataStatus;
+    private ObservableList<BlogSettings> tableDataBlogs;
     
 
     @FXML    
-    private TextField txtDownloadPath;
-    @FXML 
-    private TextField txtBlogName;
-    @FXML 
-    private RadioButton optPosts;
-    @FXML 
-    private RadioButton optLikes;
-    @FXML 
-    private CheckBox chkImage;
-    @FXML 
-    private CheckBox chkVideo;
-    @FXML 
-    private CheckBox chkStartFrom;
-    @FXML 
-    private CheckBox chkStopAt;
-    @FXML 
-    private TextField txtStartPos;
-    @FXML 
-    private TextField txtStopPos;
+    private TableView<BlogSettings> tblBlogs;
+    @FXML
+    private TableColumn<BlogSettings, String> colActive;
+    @FXML
+    private TableColumn<BlogSettings, String> colBlogName;
+    @FXML
+    private TableColumn<BlogSettings, String> colBlogType;
+    @FXML
+    private TableColumn<BlogSettings, String> colContentType;
+    @FXML
+    private TableColumn<BlogSettings, String> colPath;
     @FXML
     private Button btnStart;
     @FXML
     private Button btnStop;
+    @FXML
+    private Button btnAdd;
+    @FXML
+    private Button btnDelete;
     @FXML
     private TextArea txtLog;
     @FXML
@@ -103,29 +94,8 @@ public class SceneFXMLController implements Initializable {
     private Button btnReinitialize;
     @FXML
     private CheckBox chkUniqueCheck;
-    @FXML
-    private Button btnSelectDownloadPath;
-    @FXML
-    private CheckBox chkIgnoreEmpty;
-    @FXML 
-    private TextField txtEmptyCnt;
 
 
-    @FXML
-    private void handleButtonSelectDownloadPath(ActionEvent event) {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select Download path");
-        if (txtDownloadPath.getText() != null) {
-            File defaultDirectory = new File(txtDownloadPath.getText());
-            if (defaultDirectory.isDirectory()) {
-                chooser.setInitialDirectory(defaultDirectory);
-            }
-        }
-        File selectedDirectory = chooser.showDialog(null);
-        if (selectedDirectory != null) {
-            txtDownloadPath.setText(selectedDirectory.getAbsolutePath());
-        }
-    }
 
     @FXML
     private void handleButtonReinitialize(ActionEvent event) throws IOException {
@@ -147,21 +117,6 @@ public class SceneFXMLController implements Initializable {
         updateDBCount();
 
         */
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Blog.fxml"));
-        Parent root = loader.load();
-        BlogFXMLController ctrl = loader.getController();
-        ctrl.setBlogValues(Settings.getBlogs().values().iterator().next());
-
-        Stage stage = new Stage();
-        stage.setIconified(false);
-        stage.setResizable(false);
-        stage.setTitle("Scan files");
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(new Scene(root));
-        stage.showAndWait();
-
-        
 
     }
     
@@ -189,7 +144,61 @@ public class SceneFXMLController implements Initializable {
         tumblrService.cancel();
     } 
     
+
+    @FXML
+    private void handleButtonAdd(ActionEvent event) throws IOException {
+        BlogSettings newSettings = openBlogEditWindow (new BlogSettings());   
+        if (newSettings != null) {
+            Settings.getBlogs().put(newSettings.getBlogName(), newSettings);
+            loadBlogTable();
+            saveSettings();
+        } 
+    } 
     
+    @FXML
+    private void handleButtonDelete(ActionEvent event) throws IOException {
+        BlogSettings item = tblBlogs.getSelectionModel().getSelectedItem();
+        if (item != null) {
+            Settings.getBlogs().remove(item.getBlogName());
+            loadBlogTable();
+            saveSettings();
+        }
+    } 
+
+
+    private BlogSettings openBlogEditWindow(BlogSettings settings) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Blog.fxml"));
+        Parent root;
+        try {
+            root = loader.load();
+            BlogFXMLController ctrl = loader.getController();
+            ctrl.setBlogValues(settings);
+
+            Stage stage = new Stage();
+            stage.setIconified(false);
+            stage.setResizable(false);
+            stage.setTitle("Scan files");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();   
+
+            return ctrl.getBlogValues();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+        
+    }
+
+
+    private void loadBlogTable() {
+        tableDataBlogs = FXCollections.observableArrayList(Settings.getBlogs().values());
+        tblBlogs.setItems(tableDataBlogs);
+        tblBlogs.refresh();
+    }
+
+
     @FXML void handleUnqiueCheckAction(ActionEvent event) {
         setReinitializeBtnStatus();
     }
@@ -197,19 +206,7 @@ public class SceneFXMLController implements Initializable {
     
     
     private void setButtonStatus(boolean disable) {
-        optPosts.setDisable(disable);
-        optLikes.setDisable(disable);
-        chkImage.setDisable(disable);
-        chkVideo.setDisable(disable);
-        chkStartFrom.setDisable(disable);
-        chkStopAt.setDisable(disable);
-        txtStartPos.setDisable(disable);
-        txtStopPos.setDisable(disable);
-        txtDownloadPath.setDisable(disable);
-        btnSelectDownloadPath.setDisable(disable);
         chkUniqueCheck.setDisable(disable);
-        chkIgnoreEmpty.setDisable(disable);
-        txtEmptyCnt.setDisable(disable);
         if (disable) {
             btnReinitialize.setDisable(disable);
         } else {
@@ -250,68 +247,13 @@ public class SceneFXMLController implements Initializable {
     
     private void loadSettings() {
         Settings.load();
-        BlogSettings activeSetting = Settings.getBlogs().values().iterator().next();
-        txtBlogName.setText(activeSetting.getBlogName());
-        txtDownloadPath.setText(activeSetting.getTargetPath());
-        optPosts.setSelected(activeSetting.getPosts());
-        optLikes.setSelected(activeSetting.getLikes());
-        chkImage.setSelected(activeSetting.getImage());
-        chkVideo.setSelected(activeSetting.getVideo());
-        chkStartFrom.setSelected(activeSetting.getStartFrom());
-        chkStopAt.setSelected(activeSetting.getStopAt());
-        chkIgnoreEmpty.setSelected(activeSetting.getIgnoreEmpty());
         chkUniqueCheck.setSelected(Settings.getUniqueCheck());
-        if (activeSetting.getStartPos() == null) {
-            txtStartPos.setText("");
-        } else {
-            txtStartPos.setText(activeSetting.getStartPos().toString());
-        }
-        if (activeSetting.getStopPos() == null) {
-            txtStopPos.setText("");
-        } else {
-            txtStopPos.setText(activeSetting.getStopPos().toString());
-        }
-        if (activeSetting.getEmptyCnt() == null) {
-            txtEmptyCnt.setText("");
-        } else {
-            txtEmptyCnt.setText(activeSetting.getEmptyCnt().toString());
-        }
     }
     
     
     private void saveSettings() {
- /* 
         Settings.setUniqueCheck(chkUniqueCheck.isSelected());
-
-        
-        BlogSettings activeSetting = new BlogSettings();
-        activeSetting.setBlogName(txtBlogName.getText());
-        activeSetting.setTargetPath(txtDownloadPath.getText());
-        activeSetting.setPosts(optPosts.isSelected());
-        activeSetting.setLikes(optLikes.isSelected());
-        activeSetting.setImage(chkImage.isSelected());
-        activeSetting.setVideo(chkVideo.isSelected());
-        activeSetting.setStartFrom(chkStartFrom.isSelected());
-        activeSetting.setStopAt(chkStopAt.isSelected());
-        activeSetting.setIgnoreEmpty(chkIgnoreEmpty.isSelected());
-       
-        if (!txtStartPos.getText().isEmpty() && StringUtils.isNumeric(txtStartPos.getText())) {
-            activeSetting.setStartPos(new Integer(txtStartPos.getText()));
-        } else {
-            activeSetting.setStartPos(null);
-        }
-        if (!txtStopPos.getText().isEmpty() && StringUtils.isNumeric(txtStopPos.getText())) {
-            activeSetting.setStopPos(new Integer(txtStopPos.getText()));
-        } else {
-            activeSetting.setStopPos(null);
-        }
-        if (!txtEmptyCnt.getText().isEmpty() && StringUtils.isNumeric(txtEmptyCnt.getText())) {
-            activeSetting.setEmptyCnt(new Integer(txtEmptyCnt.getText()));
-        } else {
-            activeSetting.setEmptyCnt(null);
-        }
         Settings.save();
-        */
     }
     
     
@@ -322,8 +264,8 @@ public class SceneFXMLController implements Initializable {
             return new Task<Void>() {
                     @Override protected Void call() throws InterruptedException {
                         updateProgressInformation();
-                        tableData = FXCollections.observableArrayList(imageInformation, videoInformation);
-                        tblStatus.setItems(tableData);
+                        tableDataStatus = FXCollections.observableArrayList(imageInformation, videoInformation);
+                        tblStatus.setItems(tableDataStatus);
                         tblStatus.refresh();
                         updateDBCount();
                         return null;
@@ -335,12 +277,6 @@ public class SceneFXMLController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-       
-        
-        //MyProxySelector ps = new MyProxySelector(ProxySelector.getDefault());
-        //ProxySelector.setDefault(ps);
-       
                
         // Create a new trust manager that trust all certificates
         TrustManager[] trustAllCerts = new TrustManager[]{
@@ -378,11 +314,40 @@ public class SceneFXMLController implements Initializable {
         videoInformation = new DownloadInformation("Video");
         imageInformation = new DownloadInformation("Image");
 
+
+        // Creating table blogs structure
+        colActive.setCellValueFactory(new PropertyValueFactory<BlogSettings, String>("active"));
+        colBlogName.setCellValueFactory(new PropertyValueFactory<BlogSettings, String>("blogName"));
+        colBlogType.setCellValueFactory(new PropertyValueFactory<BlogSettings, String>("blogType"));
+        colContentType.setCellValueFactory(new PropertyValueFactory<BlogSettings, String>("contentType"));
+        colPath.setCellValueFactory(new PropertyValueFactory<BlogSettings, String>("path"));
+
+        // Set handler to 
+        tblBlogs.setRowFactory( tv -> {
+            TableRow<BlogSettings> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    BlogSettings rowData = row.getItem();
+                    
+                    BlogSettings newSettings = openBlogEditWindow (rowData);   
+                    if (newSettings != null) {
+                        Settings.getBlogs().remove(rowData.getBlogName());
+                        Settings.getBlogs().put(newSettings.getBlogName(), newSettings);
+                        loadBlogTable();
+                        saveSettings();
+                    } 
+                }
+            });
+            return row ;
+        });
         
         // Load settings of last application start
         // Settings are stored always when download is started
         loadSettings();
-        
+
+        // add blogs to table and display
+        loadBlogTable();
+
         
         // Initialize unique DB and load file count stored
         DBHelper.open();
