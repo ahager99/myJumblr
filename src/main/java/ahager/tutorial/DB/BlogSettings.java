@@ -56,10 +56,10 @@ public class BlogSettings {
         blnVideo = new Boolean(items.get(4));
         blnStartFrom = new Boolean(items.get(5));
         blnStopAt = new Boolean(items.get(6));
-        intStartPos = new Integer(items.get(7));
-        intStopPos = new Integer(items.get(8));; 
+        this.setStartPos(items.get(7));
+        this.setStopPos(items.get(8));
         blnIgnoreEmpty = new Boolean(items.get(9));
-        intEmptyCnt = new Integer(items.get(10));
+        this.setEmptyCnt(items.get(10));
         blnActive = new Boolean(items.get(11));
         targetPath = items.get(12);
     }
@@ -73,10 +73,10 @@ public class BlogSettings {
         value+= "," + blnVideo;
         value+= "," + blnStartFrom;
         value+= "," + blnStopAt;
-        value+= "," + intStartPos;
-        value+= "," + intStopPos;
+        value+= "," + getStartPosAsString();
+        value+= "," + getStopPosAsString();
         value+= "," + blnIgnoreEmpty;
-        value+= "," + intEmptyCnt;
+        value+= "," + getEmptyCntAsString();
         value+= "," + blnActive;
         value+= "," + targetPath;
         return value;

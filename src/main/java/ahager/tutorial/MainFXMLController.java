@@ -206,6 +206,9 @@ public class MainFXMLController implements Initializable {
     
     
     private void setButtonStatus(boolean disable) {
+        btnAdd.setDisable(disable);
+        btnDelete.setDisable(disable);
+        tblBlogs.setDisable(disable);
         chkUniqueCheck.setDisable(disable);
         if (disable) {
             btnReinitialize.setDisable(disable);
@@ -267,7 +270,7 @@ public class MainFXMLController implements Initializable {
                         tableDataStatus = FXCollections.observableArrayList(imageInformation, videoInformation);
                         tblStatus.setItems(tableDataStatus);
                         tblStatus.refresh();
-                        updateDBCount();
+                        //updateDBCount();
                         return null;
                     }
                 };

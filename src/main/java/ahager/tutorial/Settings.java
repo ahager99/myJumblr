@@ -95,6 +95,7 @@ public class Settings {
         for (BlogSettings blog: blogList.values()) {
             String value = blog.toString(); 
             props.setProperty(BLOGPREFIX + cnt, value);
+            cnt++;
         }
     
         OutputStream outputStream;
